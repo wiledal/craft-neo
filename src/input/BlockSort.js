@@ -252,10 +252,7 @@ const BlockSort = Garnish.Drag.extend({
 
 	defaults: {
 		container: null,
-		insertion: null,
-		magnetStrength: 1,
-		onInsertionPointChange: $.noop,
-		onSortChange: $.noop
+		magnetStrength: 1
 	}
 })
 

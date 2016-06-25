@@ -101,7 +101,7 @@ export default Garnish.Base.extend({
 			magnetStrength: 4,
 			helperLagBase: 1.5,
 			helperOpacity: 0.9,
-			onSortChange: () => this._updateBlockOrder()
+			onDragStop: () => this._updateBlockOrder()
 		})
 
 		this._blockSelect = new Garnish.Select(this.$blocksContainer, null, {
@@ -316,7 +316,7 @@ export default Garnish.Base.extend({
 	{
 		const blocks = []
 
-		this._blockSort.$items.each((index, element) =>
+		this.$blocksContainer.find('.ni_block').each((index, element) =>
 		{
 			const block = this.getBlockByElement(element)
 			blocks.push(block)
