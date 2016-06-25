@@ -86,7 +86,7 @@ const BlockSort = Garnish.Drag.extend({
 
 		if(midpoint.block !== this._draggeeBlock)
 		{
-			this._moveDraggeeToBlock(midpoint.block, midpoint.type);
+			this._moveDraggeeToBlock(midpoint.block, midpoint.type)
 		}
 
 		this.base()
@@ -94,6 +94,26 @@ const BlockSort = Garnish.Drag.extend({
 
 	onDragStop()
 	{
+		const that = this
+		this.$draggee.each(function()
+		{
+			const $block = $(this)
+			const block = that.getBlockByElement($block)
+			const isRoot = $block.parent().is(that.$container)
+
+			if(isRoot)
+			{
+				block.setLevel(0)
+			}
+			else
+			{
+				const $parentBlock = $block.parent().closest('.ni_block')
+				const parentBlock = that.getBlockByElement($parentBlock)
+
+				block.setLevel(parentBlock.getLevel() + 1)
+			}
+		})
+
 		this.returnHelpersToDraggees()
 
 		this.base()
