@@ -77,6 +77,7 @@ export default Garnish.Base.extend({
 		NS.leave()
 
 		const $neo = this.$container.find('[data-neo-b]')
+		this.$topbarContainer = $neo.filter('[data-neo-b="container.topbar"]')
 		this.$bodyContainer = $neo.filter('[data-neo-b="container.body"]')
 		this.$contentContainer = $neo.filter('[data-neo-b="container.content"]')
 		this.$childrenContainer = $neo.filter('[data-neo-b="container.children"]')
