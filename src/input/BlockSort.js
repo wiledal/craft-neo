@@ -3,6 +3,8 @@ import Garnish from 'garnish'
 
 const DragSort = Garnish.Drag.extend({
 
+	blocks: null,
+
 	init(items, settings)
 	{
 		if(typeof settings === 'undefined' && $.isPlainObject(items))
@@ -13,6 +15,8 @@ const DragSort = Garnish.Drag.extend({
 
 		settings = $.extend({}, DragSort.defaults, settings)
 		this.base(items, settings)
+
+		this.blocks = []
 	},
 
 	getHelperTargetX()
@@ -56,7 +60,26 @@ const DragSort = Garnish.Drag.extend({
 		this.base()
 	},
 
-	_getClosestItem()
+	addBlock(block)
+	{
+		this.blocks.push(block)
+
+		this.addItems(block.$container)
+	},
+
+	removeBlock(block)
+	{
+		this.blocks = this.blocks.filter(b => b !== block)
+
+		this.removeItems(block.$container)
+	},
+
+	_getClosestBlock()
+	{
+
+	},
+
+	_getBlockMidpoints(block)
 	{
 
 	}

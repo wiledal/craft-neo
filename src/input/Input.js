@@ -6,7 +6,7 @@ import Craft from 'craft'
 
 import NS from '../namespace'
 
-import DragSort from './DragSort'
+import BlockSort from './BlockSort'
 import BlockType from './BlockType'
 import Group from './Group'
 import Block from './Block'
@@ -79,7 +79,7 @@ export default Garnish.Base.extend({
 		this._buttons.on('newBlock', e => this['@newBlock'](e))
 		this._buttons.initUi()
 
-		this._blockSort = new DragSort({
+		this._blockSort = new BlockSort({
 			container: this.$blocksContainer,
 			handle: '[data-neo-b="button.move"]',
 			axis: 'y',
@@ -178,7 +178,7 @@ export default Garnish.Base.extend({
 		block.setLevel(level)
 
 		this._blocks.push(block)
-		this._blockSort.addItems(block.$container)
+		this._blockSort.addBlock(block)
 		this._blockSelect.addItems(block.$container)
 
 		block.initUi()
