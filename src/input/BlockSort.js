@@ -92,6 +92,8 @@ const BlockSort = Garnish.Drag.extend({
 
 	onDragStop()
 	{
+		this.returnHelpersToDraggees()
+
 		this.base()
 	},
 
