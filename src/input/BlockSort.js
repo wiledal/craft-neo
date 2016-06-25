@@ -24,7 +24,8 @@ const DragSort = Garnish.Drag.extend({
 			left: 0,
 			right: 0,
 			borderTop: '1px solid red',
-			textAlign: 'right'
+			textAlign: 'right',
+			fontFamily: 'monospace'
 		})
 
 		Garnish.$bod.append($marker)
@@ -35,7 +36,7 @@ const DragSort = Garnish.Drag.extend({
 
 			const midpoint = this._getClosestMidpoint()
 			$marker.css('top', midpoint.position + 'px')
-			$marker.text(midpoint.block.getBlockType().getName() + ' - ' + midpoint.type)
+			$marker.text(midpoint.type + ' - ' + midpoint.block.getId() + ' (' + midpoint.block.getBlockType().getHandle() + ')')
 		})
 	},
 
