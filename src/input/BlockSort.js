@@ -5,6 +5,7 @@ const debug = false
 
 const BlockSort = Garnish.Drag.extend({
 
+	$container: null,
 	blocks: null,
 
 	_draggeeBlock: null,
@@ -22,6 +23,7 @@ const BlockSort = Garnish.Drag.extend({
 
 		this.base(items, settings)
 
+		this.$container = settings.container
 		this.blocks = []
 
 		if(debug)
@@ -113,6 +115,8 @@ const BlockSort = Garnish.Drag.extend({
 
 	_getClosestMidpoint()
 	{
+		const margin = 10
+
 		let closest = {
 			block: null,
 			position: 0,
@@ -140,6 +144,17 @@ const BlockSort = Garnish.Drag.extend({
 					}
 				}
 			}
+		}
+
+		const endMidpoint = this.$container.offset().top + this.$container.height() + (margin / 2)
+		const endDistance = Math.abs(this.mouseY - endMidpoint)
+
+		if(endDistance < closest.distance)
+		{
+			closest.block = null
+			closest.position = endMidpoint
+			closest.distance = endDistance
+			closest.type = BlockSort.TYPE_END
 		}
 
 		return closest
@@ -174,13 +189,22 @@ const BlockSort = Garnish.Drag.extend({
 
 	_moveDraggeeToBlock: function(block, type = BlockSort.TYPE_CONTENT)
 	{
-		if(type === BlockSort.TYPE_CHILDREN)
+		switch(type)
 		{
-			block.$blocksContainer.append(this.$draggee)
-		}
-		else
-		{
-			block.$container.before(this.$draggee)
+			case BlockSort.TYPE_CHILDREN:
+			{
+				block.$blocksContainer.append(this.$draggee)
+			}
+			break
+			case BlockSort.TYPE_END:
+			{
+				this.$container.append(this.$draggee)
+			}
+			break
+			default:
+			{
+				block.$container.before(this.$draggee)
+			}
 		}
 
 		this._updateHelperAppearance()
@@ -204,6 +228,7 @@ const BlockSort = Garnish.Drag.extend({
 
 	TYPE_CONTENT: 'content',
 	TYPE_CHILDREN: 'children',
+	TYPE_END: 'end',
 
 	defaults: {
 		container: null,
