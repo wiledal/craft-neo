@@ -132,18 +132,20 @@ const DragSort = Garnish.Drag.extend({
 		const margin = 10
 		const padding = 14
 
-		const offset = block.$container.offset().top;
+		const offset = block.$container.offset().top
+
+		const isExpanded = block.isExpanded()
 
 		const blockHeight = block.$container.height()
 		const topbarHeight = block.$topbarContainer.height()
-		const contentHeight = block.$contentContainer.height()
-		const childrenHeight = block.$childrenContainer.height()
+		const contentHeight = isExpanded ? block.$contentContainer.height() : 0
+		const childrenHeight = isExpanded ? block.$childrenContainer.height() : 0
 
 		const midpoints = {
 			content: offset + (topbarHeight + contentHeight) / 2
 		}
 
-		if(childrenHeight > 0)
+		if(childrenHeight > 0 && block.isExpanded())
 		{
 			const buttonsHeight = block.getButtons().$container.height()
 
