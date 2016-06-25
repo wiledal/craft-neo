@@ -60,6 +60,7 @@
 			line-height: 30px;
 			background-color: #eef0f1;
 			color: #8f98a3;
+			transition: background-color 0.5s;
 
 			&_item {
 				cursor: default;
@@ -147,6 +148,7 @@
 							&.is-blank {
 								border-bottom-color: #eef0f1;
 								background-color: transparent;
+								transition: border-bottom-color 0.5s;
 							}
 						}
 
@@ -209,6 +211,7 @@
 			padding: 14px;
 			border-top: 1px solid #e3e5e8;
 			background-color: #eef0f1;
+			transition: background-color 0.5s;
 		}
 
 		&.is-level-odd {
