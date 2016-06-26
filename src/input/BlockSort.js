@@ -78,6 +78,7 @@ const BlockSort = Garnish.Drag.extend({
 		this._draggeeBlock = this.getBlockByElement(this.$draggee[0])
 
 		this.base()
+		this._calculateMidpoints()
 	},
 
 	onDrag()
@@ -144,16 +145,11 @@ const BlockSort = Garnish.Drag.extend({
 		this.removeItems(block.$container)
 	},
 
-	_getClosestMidpoint()
+	_calculateMidpoints()
 	{
 		const margin = 10
 
-		let closest = {
-			block: null,
-			position: 0,
-			distance: Number.MAX_VALUE,
-			type: BlockSort.TYPE_CONTENT
-		}
+		this._currentMidpoints = []
 
 		for(let block of this.blocks)
 		{
@@ -163,32 +159,40 @@ const BlockSort = Garnish.Drag.extend({
 
 				for(let type of Object.keys(midpoints))
 				{
-					const midpoint = midpoints[type]
-					const distance = Math.abs(this.mouseY - midpoint)
-
-					if(distance < closest.distance)
-					{
-						closest.block = block
-						closest.position = midpoint
-						closest.distance = distance
-						closest.type = type
-					}
+					this._currentMidpoints.push({
+						block: block,
+						position: midpoints[type],
+						type: type
+					})
 				}
 			}
 		}
 
 		const endMidpoint = this.$container.offset().top + this.$container.height() + (margin / 2)
-		const endDistance = Math.abs(this.mouseY - endMidpoint)
+		this._currentMidpoints.push({
+			block: null,
+			position: endMidpoint,
+			type: BlockSort.TYPE_END
+		})
+	},
 
-		if(endDistance < closest.distance)
+	_getClosestMidpoint()
+	{
+		let minDistance = Number.MAX_VALUE
+		let closest = null
+
+		for(let midpoint of this._currentMidpoints)
 		{
-			closest.block = null
-			closest.position = endMidpoint
-			closest.distance = endDistance
-			closest.type = BlockSort.TYPE_END
+			const distance = Math.abs(this.mouseY - midpoint.position)
+
+			if(distance < minDistance)
+			{
+				minDistance = distance
+				closest = midpoint
+			}
 		}
 
-		return closest
+		return closest ? Object.assign({distance: minDistance}, closest) : false
 	},
 
 	_getBlockMidpoints(block)
@@ -239,6 +243,7 @@ const BlockSort = Garnish.Drag.extend({
 		}
 
 		this._updateHelperAppearance()
+		this._calculateMidpoints()
 	},
 
 	_updateHelperAppearance()
