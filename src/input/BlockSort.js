@@ -130,6 +130,39 @@ const BlockSort = Garnish.Drag.extend({
 		this.removeItems(block.$container)
 	},
 
+	_getClosestMidpoint()
+	{
+		let minDistance = Number.MAX_VALUE
+		let maxDistance = Number.MIN_VALUE
+		let closest = null
+
+		for(let midpoint of this._currentMidpoints)
+		{
+			if(midpoint.direction === BlockSort.DIRECTION_UP)
+			{
+				const compareY = this.mouseY - this.mouseOffsetY
+
+				if(compareY < midpoint.position && midpoint.position < minDistance)
+				{
+					minDistance = midpoint.position
+					closest = midpoint
+				}
+			}
+			else
+			{
+				const compareY = this.mouseY - this.mouseOffsetY + this._draggeeBlockHeight
+
+				if(compareY > midpoint.position && midpoint.position > maxDistance)
+				{
+					maxDistance = midpoint.position
+					closest = midpoint
+				}
+			}
+		}
+
+		return closest
+	},
+
 	_calculateMidpoints()
 	{
 		const margin = 10
@@ -169,39 +202,6 @@ const BlockSort = Garnish.Drag.extend({
 			type: BlockSort.TYPE_END,
 			direction: BlockSort.DIRECTION_DOWN
 		})
-	},
-
-	_getClosestMidpoint()
-	{
-		let minDistance = Number.MAX_VALUE
-		let maxDistance = Number.MIN_VALUE
-		let closest = null
-
-		for(let midpoint of this._currentMidpoints)
-		{
-			if(midpoint.direction === BlockSort.DIRECTION_UP)
-			{
-				const compareY = this.mouseY - this.mouseOffsetY
-
-				if(compareY < midpoint.position && midpoint.position < minDistance)
-				{
-					minDistance = midpoint.position
-					closest = midpoint
-				}
-			}
-			else
-			{
-				const compareY = this.mouseY - this.mouseOffsetY + this._draggeeBlockHeight
-
-				if(compareY > midpoint.position && midpoint.position > maxDistance)
-				{
-					maxDistance = midpoint.position
-					closest = midpoint
-				}
-			}
-		}
-
-		return closest
 	},
 
 	_getBlockMidpoints(block)
@@ -244,6 +244,7 @@ const BlockSort = Garnish.Drag.extend({
 
 	_moveDraggeeToBlock: function(block, type = BlockSort.TYPE_CONTENT, direction = BlockSort.DIRECTION_DOWN)
 	{
+		// TODO Note to self - this ALWAYS has to move the block, otherwise the found midpoint is incorrect and another needs to be looked for
 		switch(type)
 		{
 			case BlockSort.TYPE_CHILDREN:
@@ -294,6 +295,19 @@ const BlockSort = Garnish.Drag.extend({
 
 	_validateDraggeeChildren(block)
 	{
+		if(!block)
+		{
+			for(let draggeeBlock of this._draggeeBlocks)
+			{
+				if(!draggeeBlock.getBlockType().getTopLevel())
+				{
+					return false
+				}
+			}
+
+			return true
+		}
+
 		const blockType = block.getBlockType()
 
 		for(let draggeeBlock of this._draggeeBlocks)
