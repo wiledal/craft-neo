@@ -51,6 +51,7 @@ const BlockSort = Garnish.Drag.extend({
 	onDragStart()
 	{
 		this._draggeeBlock = this.getBlockByElement(this.$draggee[0])
+		this._draggeeBlockHeight = this.$draggee.height()
 
 		this.base()
 		this._calculateMidpoints()
@@ -158,7 +159,18 @@ const BlockSort = Garnish.Drag.extend({
 
 		for(let midpoint of this._currentMidpoints)
 		{
-			const distance = Math.abs(this.mouseY - midpoint.position)
+			let distance = this.mouseY - midpoint.position
+
+			if(midpoint.position > this.mouseY)
+			{
+				distance += (this._draggeeBlockHeight - this.mouseOffsetY)
+			}
+			else
+			{
+				distance -= this.mouseOffsetY
+			}
+
+			distance = Math.abs(distance)
 
 			if(distance < minDistance)
 			{
@@ -216,6 +228,8 @@ const BlockSort = Garnish.Drag.extend({
 				block.$container.before(this.$draggee)
 			}
 		}
+
+		this._draggeeBlockHeight = this.$draggee.height()
 
 		this._updateHelperAppearance()
 		this._calculateMidpoints()
