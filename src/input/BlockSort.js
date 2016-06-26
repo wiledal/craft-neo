@@ -244,6 +244,9 @@ const BlockSort = Garnish.Drag.extend({
 
 	_moveDraggeeToBlock: function(block, type = BlockSort.TYPE_CONTENT, direction = BlockSort.DIRECTION_DOWN)
 	{
+		const parentBlock = block ? this.getParentBlock(block) : null
+		const validChild = this._validateDraggeeChildren(parentBlock)
+
 		switch(type)
 		{
 			case BlockSort.TYPE_CHILDREN:
@@ -252,20 +255,15 @@ const BlockSort = Garnish.Drag.extend({
 				{
 					block.$blocksContainer.append(this.$draggee)
 				}
-				else
+				else if(validChild)
 				{
-					const parentBlock = this.getParentBlock(block)
-
-					if(this._validateDraggeeChildren(parentBlock))
-					{
-						block.$container.after(this.$draggee)
-					}
+					block.$container.after(this.$draggee)
 				}
 			}
 			break
 			case BlockSort.TYPE_END:
 			{
-				if(this._validateDraggeeChildren(null))
+				if(validChild)
 				{
 					this.$container.append(this.$draggee)
 				}
@@ -275,9 +273,7 @@ const BlockSort = Garnish.Drag.extend({
 			{
 				if(direction === BlockSort.DIRECTION_UP)
 				{
-					const parentBlock = this.getParentBlock(block)
-
-					if(this._validateDraggeeChildren(parentBlock))
+					if(validChild)
 					{
 						block.$container.before(this.$draggee)
 					}
@@ -288,14 +284,9 @@ const BlockSort = Garnish.Drag.extend({
 					{
 						block.$blocksContainer.prepend(this.$draggee)
 					}
-					else
+					else if(validChild)
 					{
-						const parentBlock = this.getParentBlock(block)
-
-						if(this._validateDraggeeChildren(parentBlock))
-						{
-							block.$container.after(this.$draggee)
-						}
+						block.$container.after(this.$draggee)
 					}
 				}
 			}
