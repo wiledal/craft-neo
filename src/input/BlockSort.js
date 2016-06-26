@@ -208,7 +208,6 @@ const BlockSort = Garnish.Drag.extend({
 			const contentHeight = isExpanded ? block.$contentContainer.height() : 0
 			const childrenHeight = isExpanded ? block.$childrenContainer.height() : 0
 
-
 			midpoints[BlockSort.TYPE_CONTENT] = offset + (topbarHeight + contentHeight) / 2
 
 			if(childrenHeight > 0 && block.isExpanded())
