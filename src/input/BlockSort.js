@@ -112,6 +112,17 @@ const BlockSort = Garnish.Drag.extend({
 
 				block.setLevel(parentBlock.getLevel() + 1)
 			}
+
+			$block.find('.ni_block').each(function()
+			{
+				const $childBlock = $(this)
+				const childBlock = that.getBlockByElement($childBlock)
+
+				const $parentBlock = $childBlock.parent().closest('.ni_block')
+				const parentBlock = that.getBlockByElement($parentBlock)
+
+				childBlock.setLevel(parentBlock.getLevel() + 1)
+			})
 		})
 
 		this.returnHelpersToDraggees()
