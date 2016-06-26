@@ -125,7 +125,7 @@ const BlockSort = Garnish.Drag.extend({
 		const margin = 10
 
 		this._draggeeBlockY = this.$draggee.offset().top
-		this._draggeeBlockHeight = this.$draggee.height()
+		this._draggeeBlockHeight = this.$draggee.height() + margin
 
 		this._currentMidpoints = []
 
