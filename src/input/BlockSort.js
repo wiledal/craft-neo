@@ -48,6 +48,13 @@ const BlockSort = Garnish.Drag.extend({
 		return this.blocks.find(block => block.$container.is($block))
 	},
 
+	getParentBlock(block)
+	{
+		const $parentBlock = block.$container.parent().closest('.ni_block')
+
+		return $parentBlock.length > 0 ? this.getBlockByElement($parentBlock) : false
+	},
+
 	onDragStart()
 	{
 		const that = this
@@ -68,7 +75,7 @@ const BlockSort = Garnish.Drag.extend({
 
 		if(midpoint)
 		{
-			this._moveDraggeeToBlock(midpoint.block, midpoint.type)
+			this._moveDraggeeToBlock(midpoint.block, midpoint.type, midpoint.direction)
 		}
 
 		this.base()
@@ -89,8 +96,7 @@ const BlockSort = Garnish.Drag.extend({
 			}
 			else
 			{
-				const $parentBlock = $block.parent().closest('.ni_block')
-				const parentBlock = that.getBlockByElement($parentBlock)
+				const parentBlock = that.getParentBlock(block)
 
 				block.setLevel(parentBlock.getLevel() + 1)
 			}
@@ -99,9 +105,7 @@ const BlockSort = Garnish.Drag.extend({
 			{
 				const $childBlock = $(this)
 				const childBlock = that.getBlockByElement($childBlock)
-
-				const $parentBlock = $childBlock.parent().closest('.ni_block')
-				const parentBlock = that.getBlockByElement($parentBlock)
+				const parentBlock = that.getParentBlock(childBlock)
 
 				childBlock.setLevel(parentBlock.getLevel() + 1)
 			})
@@ -143,10 +147,16 @@ const BlockSort = Garnish.Drag.extend({
 
 				for(let type of Object.keys(midpoints))
 				{
+					const position = midpoints[type]
+					const direction = this._draggeeBlockY > position ?
+						BlockSort.DIRECTION_UP :
+						BlockSort.DIRECTION_DOWN
+
 					this._currentMidpoints.push({
 						block: block,
-						position: midpoints[type],
-						type: type
+						position: position,
+						type: type,
+						direction: direction
 					})
 				}
 			}
@@ -156,7 +166,8 @@ const BlockSort = Garnish.Drag.extend({
 		this._currentMidpoints.push({
 			block: null,
 			position: endMidpoint,
-			type: BlockSort.TYPE_END
+			type: BlockSort.TYPE_END,
+			direction: BlockSort.DIRECTION_DOWN
 		})
 	},
 
@@ -168,7 +179,7 @@ const BlockSort = Garnish.Drag.extend({
 
 		for(let midpoint of this._currentMidpoints)
 		{
-			if(midpoint.position < this._draggeeBlockY)
+			if(midpoint.direction === BlockSort.DIRECTION_UP)
 			{
 				const compareY = this.mouseY - this.mouseOffsetY
 
@@ -214,8 +225,7 @@ const BlockSort = Garnish.Drag.extend({
 			const contentHeight = isExpanded ? block.$contentContainer.height() : 0
 			const childrenHeight = isExpanded ? block.$childrenContainer.height() : 0
 
-			const $parentBlock = block.$container.parent().closest('.ni_block')
-			const parentBlock = $parentBlock.length > 0 ? this.getBlockByElement($parentBlock) : false
+			const parentBlock = this.getParentBlock(block)
 
 			if(!parentBlock || this._validateDraggeeChildren(parentBlock))
 			{
@@ -232,19 +242,24 @@ const BlockSort = Garnish.Drag.extend({
 		return midpoints
 	},
 
-	_moveDraggeeToBlock: function(block, type = BlockSort.TYPE_CONTENT)
+	_moveDraggeeToBlock: function(block, type = BlockSort.TYPE_CONTENT, direction = BlockSort.DIRECTION_DOWN)
 	{
 		switch(type)
 		{
 			case BlockSort.TYPE_CHILDREN:
 			{
-				if(this.$draggee.offset().top > block.$container.offset().top && this.$draggee.closest(block.$container).length == 0)
+				if(direction === BlockSort.DIRECTION_UP && this.$draggee.closest(block.$container).length == 0)
 				{
 					block.$blocksContainer.append(this.$draggee)
 				}
 				else
 				{
-					block.$container.after(this.$draggee)
+					const parentBlock = this.getParentBlock(block)
+
+					if(this._validateDraggeeChildren(parentBlock))
+					{
+						block.$container.after(this.$draggee)
+					}
 				}
 			}
 			break
@@ -255,7 +270,7 @@ const BlockSort = Garnish.Drag.extend({
 			break
 			default:
 			{
-				if(this.$draggee.offset().top > block.$container.offset().top)
+				if(direction === BlockSort.DIRECTION_UP)
 				{
 					block.$container.before(this.$draggee)
 				}
@@ -311,6 +326,8 @@ const BlockSort = Garnish.Drag.extend({
 	TYPE_CONTENT: 'content',
 	TYPE_CHILDREN: 'children',
 	TYPE_END: 'end',
+	DIRECTION_UP: 'up',
+	DIRECTION_DOWN: 'down',
 
 	defaults: {
 		container: null,
