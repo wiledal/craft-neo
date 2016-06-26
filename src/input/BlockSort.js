@@ -6,7 +6,7 @@ const BlockSort = Garnish.Drag.extend({
 	$container: null,
 	blocks: null,
 
-	_draggeeBlock: null,
+	_draggeeBlocks: null,
 
 	init(items, settings)
 	{
@@ -50,7 +50,13 @@ const BlockSort = Garnish.Drag.extend({
 
 	onDragStart()
 	{
-		this._draggeeBlock = this.getBlockByElement(this.$draggee[0])
+		const that = this
+
+		this._draggeeBlocks = []
+		this.$draggee.each(function()
+		{
+			that._draggeeBlocks.push(that.getBlockByElement(this))
+		})
 
 		this.base()
 		this._calculateMidpoints()
@@ -210,7 +216,7 @@ const BlockSort = Garnish.Drag.extend({
 
 			midpoints[BlockSort.TYPE_CONTENT] = offset + (topbarHeight + contentHeight) / 2
 
-			if(childrenHeight > 0 && block.isExpanded())
+			if(childrenHeight > 0 && block.isExpanded() && this._validateDraggeeChildren(block))
 			{
 				const buttonsHeight = block.getButtons().$container.height()
 				midpoints[BlockSort.TYPE_CHILDREN] = offset + blockHeight - border - (padding + buttonsHeight + margin) / 2
@@ -249,7 +255,7 @@ const BlockSort = Garnish.Drag.extend({
 				}
 				else
 				{
-					if(block.$blocksContainer.length > 0 && block.isExpanded())
+					if(block.getBlockType().isParent() && block.isExpanded() && this._validateDraggeeChildren(block))
 					{
 						block.$blocksContainer.prepend(this.$draggee)
 					}
@@ -263,6 +269,21 @@ const BlockSort = Garnish.Drag.extend({
 
 		this._updateHelperAppearance()
 		this._calculateMidpoints()
+	},
+
+	_validateDraggeeChildren(block)
+	{
+		const blockType = block.getBlockType()
+
+		for(let draggeeBlock of this._draggeeBlocks)
+		{
+			if(!blockType.isValidChildBlock(draggeeBlock))
+			{
+				return false
+			}
+		}
+
+		return true
 	},
 
 	_updateHelperAppearance()
