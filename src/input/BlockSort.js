@@ -244,7 +244,6 @@ const BlockSort = Garnish.Drag.extend({
 
 	_moveDraggeeToBlock: function(block, type = BlockSort.TYPE_CONTENT, direction = BlockSort.DIRECTION_DOWN)
 	{
-		// TODO Note to self - this ALWAYS has to move the block, otherwise the found midpoint is incorrect and another needs to be looked for
 		switch(type)
 		{
 			case BlockSort.TYPE_CHILDREN:
@@ -266,14 +265,22 @@ const BlockSort = Garnish.Drag.extend({
 			break
 			case BlockSort.TYPE_END:
 			{
-				this.$container.append(this.$draggee)
+				if(this._validateDraggeeChildren(null))
+				{
+					this.$container.append(this.$draggee)
+				}
 			}
 			break
 			default:
 			{
 				if(direction === BlockSort.DIRECTION_UP)
 				{
-					block.$container.before(this.$draggee)
+					const parentBlock = this.getParentBlock(block)
+
+					if(this._validateDraggeeChildren(parentBlock))
+					{
+						block.$container.before(this.$draggee)
+					}
 				}
 				else
 				{
@@ -283,7 +290,12 @@ const BlockSort = Garnish.Drag.extend({
 					}
 					else
 					{
-						block.$container.after(this.$draggee)
+						const parentBlock = this.getParentBlock(block)
+
+						if(this._validateDraggeeChildren(parentBlock))
+						{
+							block.$container.after(this.$draggee)
+						}
 					}
 				}
 			}
