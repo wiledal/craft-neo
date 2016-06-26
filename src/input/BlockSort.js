@@ -189,26 +189,33 @@ const BlockSort = Garnish.Drag.extend({
 
 	_getBlockMidpoints(block)
 	{
+		const midpoints = {}
+
 		const border = 1
 		const margin = 10
 		const padding = 14
 
-		const offset = block.$container.offset().top
+		const isAncestorCollapsed = (block.$container.parent().closest('.ni_block.is-contracted').length > 0)
 
-		const isExpanded = block.isExpanded()
-
-		const blockHeight = block.$container.height()
-		const topbarHeight = block.$topbarContainer.height()
-		const contentHeight = isExpanded ? block.$contentContainer.height() : 0
-		const childrenHeight = isExpanded ? block.$childrenContainer.height() : 0
-
-		const midpoints = {}
-		midpoints[BlockSort.TYPE_CONTENT] = offset + (topbarHeight + contentHeight) / 2
-
-		if(childrenHeight > 0 && block.isExpanded())
+		if(!isAncestorCollapsed)
 		{
-			const buttonsHeight = block.getButtons().$container.height()
-			midpoints[BlockSort.TYPE_CHILDREN] = offset + blockHeight - border - (padding + buttonsHeight + margin) / 2
+			const offset = block.$container.offset().top
+
+			const isExpanded = block.isExpanded()
+
+			const blockHeight = block.$container.height()
+			const topbarHeight = block.$topbarContainer.height()
+			const contentHeight = isExpanded ? block.$contentContainer.height() : 0
+			const childrenHeight = isExpanded ? block.$childrenContainer.height() : 0
+
+
+			midpoints[BlockSort.TYPE_CONTENT] = offset + (topbarHeight + contentHeight) / 2
+
+			if(childrenHeight > 0 && block.isExpanded())
+			{
+				const buttonsHeight = block.getButtons().$container.height()
+				midpoints[BlockSort.TYPE_CHILDREN] = offset + blockHeight - border - (padding + buttonsHeight + margin) / 2
+			}
 		}
 
 		return midpoints
@@ -243,7 +250,7 @@ const BlockSort = Garnish.Drag.extend({
 				}
 				else
 				{
-					if(block.$blocksContainer.length > 0)
+					if(block.$blocksContainer.length > 0 && block.isExpanded())
 					{
 						block.$blocksContainer.prepend(this.$draggee)
 					}
