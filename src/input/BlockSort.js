@@ -146,7 +146,7 @@ const BlockSort = Garnish.Drag.extend({
 
 		for(let block of this.blocks)
 		{
-			if(!this.$draggee.is(block.$container) || block === this._draggeeBlock)
+			if(block.$container.closest(this.$draggee).length == 0 || block === this._draggeeBlock)
 			{
 				const midpoints = this._getBlockMidpoints(block)
 
