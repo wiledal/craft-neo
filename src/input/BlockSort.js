@@ -220,7 +220,7 @@ const BlockSort = Garnish.Drag.extend({
 		{
 			case BlockSort.TYPE_CHILDREN:
 			{
-				if(this.$draggee.offset().top > block.$container.offset().top)
+				if(this.$draggee.offset().top > block.$container.offset().top && this.$draggee.closest(block.$container).length == 0)
 				{
 					block.$blocksContainer.append(this.$draggee)
 				}
