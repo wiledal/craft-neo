@@ -129,6 +129,7 @@
 						display: inline-block;
 						height: 30px;
 						padding: 0 10px;
+						border-bottom-color: #fafafa;
 						color: rgba(#29323d, 0.5);
 
 						&:hover {
@@ -138,9 +139,10 @@
 						&.is-selected {
 							cursor: default;
 							padding: 0 9px;
-							border: 1px solid #e3e5e8;
-							border-top: 0;
-							border-bottom-color: #fafafa;
+							border-left: 1px solid #e3e5e8;
+							border-right: 1px solid #e3e5e8;
+							border-bottom-width: 1px;
+							border-bottom-style: solid;
 							margin-bottom: -1px;
 							background-color: #fafafa;
 							color: #576575;
@@ -221,7 +223,7 @@
 				background-color: white;
 			}
 
-			> .ni_block_topbar > .ni_block_topbar_item.tabs .tab.is-selected.is-blank {
+			> .ni_block_topbar > .ni_block_topbar_item.tabs .tab.is-blank {
 				border-bottom-color: white;
 			}
 		}
