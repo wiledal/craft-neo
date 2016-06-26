@@ -1,8 +1,6 @@
 import $ from 'jquery'
 import Garnish from 'garnish'
 
-const debug = false
-
 const BlockSort = Garnish.Drag.extend({
 
 	$container: null,
@@ -25,29 +23,6 @@ const BlockSort = Garnish.Drag.extend({
 
 		this.$container = settings.container
 		this.blocks = []
-
-		if(debug)
-		{
-			const $marker = $('<div>').css({
-				position: 'absolute',
-				zIndex: 9999,
-				left: 0,
-				right: 0,
-				borderTop: '1px solid red',
-				textAlign: 'right',
-				fontFamily: 'monospace'
-			})
-
-			Garnish.$bod.append($marker)
-			Garnish.$bod.on('mousemove', e =>
-			{
-				this.mouseY = e.pageY
-
-				const midpoint = this._getClosestMidpoint()
-				$marker.css('top', midpoint.position + 'px')
-				$marker.text(midpoint.type + ' - ' + midpoint.block.getId() + ' (' + midpoint.block.getBlockType().getHandle() + ')')
-			})
-		}
 	},
 
 	getHelperTargetX()
