@@ -121,17 +121,6 @@ export default Garnish.Base.extend({
 
 		this.addListener(this.$togglerButton, 'dblclick', '@doubleClickTitle')
 		this.addListener(this.$tabButton, 'click', '@setTab')
-
-		if(!this.isNew())
-		{
-			this._initialState = {
-				enabled: this._enabled,
-				level: this._level,
-				content: Garnish.getPostData(this.$contentContainer)
-			}
-
-			this._detectChangeInterval = setInterval(() => this._detectChange(), 300)
-		}
 	},
 
 	initUi()
@@ -165,6 +154,17 @@ export default Garnish.Base.extend({
 
 			this._initReasonsPlugin()
 			this._initRelabelPlugin()
+
+			if(!this.isNew() && !this._modified)
+			{
+				this._initialState = {
+					enabled: this._enabled,
+					level: this._level,
+					content: Garnish.getPostData(this.$contentContainer)
+				}
+
+				this._detectChangeInterval = setInterval(() => this._detectChange(), 300)
+			}
 
 			this.trigger('initUi')
 		}
